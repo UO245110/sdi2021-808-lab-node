@@ -31,4 +31,17 @@ module.exports = function(app) {
 
         res.send(String(respuesta));
     });
+
+    //Comodines: (Se puede usar todas las expresiones regulares
+    // -> http://expressjs.com/es/guide/routing.html
+    app.get('/promo*', function (req,res){
+        res.send('Respuesta patrón promo*')
+    })
+
+    //Aquí usamos el body parser.
+    app.post("/cancion",function (req,res){
+        res.send("Canción agregada:"+req.body.nombre + "<br>"
+            + " genero: " + req.body.genero+" <br>"
+            +" precio: " + req.body.precio);
+    });
 };

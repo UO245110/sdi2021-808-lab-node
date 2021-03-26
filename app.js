@@ -5,13 +5,9 @@ let app = express();
 //Variables
 app.set('port', 8081);
 
-app.get('/usuario', function (rezq,res){
-    console.log("depurar aqui");
-    res.send('ver usuarios');
-});
-app.get('/canciones', function (rezq,res){
-    res.send('ver canciones');
-});
+//Rutas controladores por lógicas
+require("./routes/rusuarios.js")(app);	// (app, param1, param2, etc.)
+require("./routes/rcanciones.js")(app);	// (app, param1, param2, etc.)
 
 //lanzar el servicio
 app.listen(app.get('port'),function (){

@@ -74,4 +74,5 @@ module.exports = function(app, swig) {
             + " genero: " + req.body.genero+" <br>"
             +" precio: " + req.body.precio);
     });
+
 };

@@ -15,6 +15,7 @@ app.set('port', 8081);
 //Rutas controladores por lógicas
 require("./routes/rusuarios.js")(app, swig);	// (app, param1, param2, etc.)
 require("./routes/rcanciones.js")(app, swig);	// (app, param1, param2, etc.)
+require("./routes/rautores.js")(app, swig);
 
 //Para referirnos a la carpeta, se hace por convenio el nombre:
 app.use(express.static('public'));

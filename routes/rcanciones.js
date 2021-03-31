@@ -1,5 +1,6 @@
-module.exports = function(app) {
+module.exports = function(app, swig) {
 
+    /*
     //Comprobamiento de los parámetros, tratamiento si es null.
     app.get("/canciones", function(req, res) {
             let respuesta= "";
@@ -11,6 +12,34 @@ module.exports = function(app) {
                 respuesta += 'Autor: ' + req.query.autor;
 
             res.send(respuesta);
+    }); */
+
+    //Usando swig con swig.rederFile recibimos la plantilla y los parámetros a usar
+    app.get("/canciones", function (req, res) {
+        let canciones = [{
+            "nombre" : "Blank space",
+            "precio" : "1.2"
+        },{
+            "nombre" : "See you again",
+            "precio" : "1.3"
+        },{
+            "nombre" : "Uptown Funk",
+            "precio" : "1.1"
+        }];
+        let respuesta = swig.renderFile('view/btienda.html',
+            {
+                vendedor : 'Tienda de canciones',
+                canciones : canciones
+            });
+        res.send(respuesta);
+    });
+
+    //Ojo cuidado, tenemos que poner este método primero para que no nos redireccione al de id = agregar, CUIDAO
+    app.get('/canciones/agregar', function (req, res) {
+        let respuesta = swig.renderFile('view/bagregar.html', {
+
+        });
+        res.send(respuesta);
     });
 
     //Referencia a la clave pasada en URL.
@@ -37,6 +66,7 @@ module.exports = function(app) {
     app.get('/promo*', function (req,res){
         res.send('Respuesta patrón promo*')
     })
+
 
     //Aquí usamos el body parser.
     app.post("/cancion",function (req,res){

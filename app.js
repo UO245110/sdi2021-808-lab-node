@@ -6,14 +6,15 @@ let app = express();
 let bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true}));
-
+    //Renderizado de plantillas: http://node-swig.github.io/swig-templates/docs/tags/
+let swig  = require('swig');
 
 //Variables
 app.set('port', 8081);
 
 //Rutas controladores por lógicas
-require("./routes/rusuarios.js")(app);	// (app, param1, param2, etc.)
-require("./routes/rcanciones.js")(app);	// (app, param1, param2, etc.)
+require("./routes/rusuarios.js")(app, swig);	// (app, param1, param2, etc.)
+require("./routes/rcanciones.js")(app, swig);	// (app, param1, param2, etc.)
 
 //Para referirnos a la carpeta, se hace por convenio el nombre:
 app.use(express.static('public'));

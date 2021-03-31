@@ -2,9 +2,18 @@ module.exports = function(app, swig) {
 
     //Ojo cuidado, tenemos que poner este método primero para que no nos redireccione al de id = agregar, CUIDAO
     app.get('/autores/agregar', function (req, res) {
-        let respuesta = swig.renderFile('view/autores-agregar.html', {
-
-        });
+        let roles = [{
+            "rol" : "Vientista"
+        },{
+            "rol" : "Cuerdista"
+        },{
+            "rol" : "Percusionista"
+        }];
+        let respuesta = swig.renderFile('view/autores-agregar.html',
+            {
+                vendedor : 'Tienda de canciones',
+                roles : roles
+            });
         res.send(respuesta);
     });
 

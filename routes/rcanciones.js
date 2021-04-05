@@ -1,4 +1,4 @@
-module.exports = function(app, swig) {
+module.exports = function(app, swig, mongo) {
 
     /*
     //Comprobamiento de los parámetros, tratamiento si es null.
@@ -70,9 +70,27 @@ module.exports = function(app, swig) {
 
     //Aquí usamos el body parser.
     app.post("/cancion",function (req,res){
-        res.send("Canción agregada:"+req.body.nombre + "<br>"
-            + " genero: " + req.body.genero+" <br>"
-            +" precio: " + req.body.precio);
+        let cancion = {
+            nombre : req.body.nombre,
+            genero : req.body.genero,
+            precio : req.body.precio
+        }
+        //Método de conexión a bdatos:
+        mongo.MongoClient.connect(app.get('db'), function(err, db) {
+            if (err) {
+                res.send("Error de conexión: " + err);
+            } else {
+                let collection = db.collection('canciones'); collection.insertOne(cancion, function(err, result) {
+                    if (err) {
+                        res.send("Error al insertar " + err);
+                    } else {
+                        res.send("Agregada id: "+ result.ops[0]._id);
+                    }
+                    db.close();
+                });
+            }
+        });
+
     });
 
 };

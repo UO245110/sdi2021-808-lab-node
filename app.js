@@ -8,13 +8,17 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true}));
     //Renderizado de plantillas: http://node-swig.github.io/swig-templates/docs/tags/
 let swig  = require('swig');
+    //Database de mongodb:
+let mongo = require('mongodb');
+
 
 //Variables
 app.set('port', 8081);
+app.set('db','mongodb://admin:sdi@cluster0-shard-00-00.7mkjh.mongodb.net:27017,cluster0-shard-00-01.7mkjh.mongodb.net:27017,cluster0-shard-00-02.7mkjh.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-corpmm-shard-0&authSource=admin&retryWrites=true&w=majority');
 
 //Rutas controladores por lógicas
 require("./routes/rusuarios.js")(app, swig);	// (app, param1, param2, etc.)
-require("./routes/rcanciones.js")(app, swig);	// (app, param1, param2, etc.)
+require("./routes/rcanciones.js")(app, swig,mongo);	// (app, param1, param2, etc.)
 require("./routes/rautores.js")(app, swig);
 
 //Para referirnos a la carpeta, se hace por convenio el nombre:

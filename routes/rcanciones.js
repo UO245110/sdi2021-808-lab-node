@@ -36,6 +36,13 @@ module.exports = function (app, swig, gestorBD) {
 
     //Ojo cuidado, tenemos que poner este método primero para que no nos redireccione al de id = agregar, CUIDAO
     app.get('/canciones/agregar', function (req, res) {
+
+        //Solo si estamos en sesión:
+        if ( req.session.usuario == null){
+            res.redirect("/tienda");
+            return;
+        }
+
         let respuesta = swig.renderFile('view/bagregar.html', {});
         res.send(respuesta);
     });
@@ -81,10 +88,18 @@ module.exports = function (app, swig, gestorBD) {
 
     //Aquí usamos el body parser.
     app.post("/cancion", function (req, res) {
+        //Solo si se está iniciado en sesión:
+        if ( req.session.usuario == null){
+            res.redirect("/tienda");
+            return;
+        }
+
         let cancion = {
             nombre: req.body.nombre,
             genero: req.body.genero,
-            precio: req.body.precio
+            precio: req.body.precio,
+            //Añadimos el user también:
+            autor: req.session.usuario
         };
         // Conectarse
         gestorBD.insertarCancion(cancion, function (id) {

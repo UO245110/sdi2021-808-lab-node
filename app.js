@@ -3,6 +3,16 @@
 let express = require('express');
 let app = express();
 
+//Gestión de sesión: https://github.com/expressjs/session#express-session
+let expressSession = require('express-session');
+app.use(expressSession({
+    secret: 'abcdefg',
+    resave: true,
+    saveUninitialized: true
+}));
+
+//Para encriptar:
+let crypto = require('crypto');
 
 //Para subida de ficheros;
 let fileUpload = require('express-fileupload');
@@ -27,6 +37,9 @@ gestorBD.init(app,mongo);
 //Variables
 app.set('port', 8081);
 app.set('db','mongodb://admin:sdi@cluster0-shard-00-00.7mkjh.mongodb.net:27017,cluster0-shard-00-01.7mkjh.mongodb.net:27017,cluster0-shard-00-02.7mkjh.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-corpmm-shard-0&authSource=admin&retryWrites=true&w=majority');
+    //Estas son para crypto:
+app.set('clave','abcdefg');
+app.set('crypto',crypto);
 
 //Rutas controladores por lógicas
 require("./routes/rusuarios.js")(app, swig, gestorBD);	// (app, param1, param2, etc.)

@@ -5,14 +5,16 @@ module.exports = {
         this.app = app;
     },
 
-    obtenerCanciones: function (funcionCallback) {
+    //Filtramos con le criterio:
+    obtenerCanciones: function (criterio,funcionCallback) {
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
                 funcionCallback(null);
             } else {
 
                 let collection = db.collection('canciones');
-                collection.find().toArray(function (err, canciones) {
+                //Añadimos el criterio:
+                collection.find(criterio).toArray(function (err, canciones) {
                     if (err) {
                         funcionCallback(null);
                     } else {

@@ -37,27 +37,21 @@ module.exports = function (app, swig, gestorBD) {
     //Ojo cuidado, tenemos que poner este método primero para que no nos redireccione al de id = agregar, CUIDAO
     app.get('/canciones/agregar', function (req, res) {
 
-        //Solo si estamos en sesión:
-        if ( req.session.usuario == null){
-            res.redirect("/tienda");
-            return;
-        }
-
         let respuesta = swig.renderFile('view/bagregar.html', {});
         res.send(respuesta);
     });
 
     //Referencia a la clave pasada en URL.
     app.get('/cancion/:id', function (req, res) {
-        let criterio = { "_id" : gestorBD.mongo.ObjectID(req.params.id) };
+        let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
 
-        gestorBD.obtenerCanciones(criterio,function(canciones){
-            if ( canciones == null ){
+        gestorBD.obtenerCanciones(criterio, function (canciones) {
+            if (canciones == null) {
                 res.send("Error al recuperar la canción.");
             } else {
                 let respuesta = swig.renderFile('view/bcancion.html',
                     {
-                        cancion : canciones[0]
+                        cancion: canciones[0]
                     });
                 res.send(respuesta);
             }
@@ -88,11 +82,6 @@ module.exports = function (app, swig, gestorBD) {
 
     //Aquí usamos el body parser.
     app.post("/cancion", function (req, res) {
-        //Solo si se está iniciado en sesión:
-        if ( req.session.usuario == null){
-            res.redirect("/tienda");
-            return;
-        }
 
         let cancion = {
             nombre: req.body.nombre,
@@ -109,18 +98,18 @@ module.exports = function (app, swig, gestorBD) {
                 //Añadimos la gestión de la portada:
                 if (req.files.portada != null) {
                     var imagen = req.files.portada;
-                    imagen.mv('public/portadas/' + id + '.png', function(err) {
+                    imagen.mv('public/portadas/' + id + '.png', function (err) {
                         if (err) {
                             res.send("Error al subir la portada");
                         } else {
                             //Gestión de música:
                             if (req.files.audio != null) {
                                 let audio = req.files.audio;
-                                audio.mv('public/audios/'+id+'.mp3', function(err) {
+                                audio.mv('public/audios/' + id + '.mp3', function (err) {
                                     if (err) {
                                         res.send("Error al subir el audio");
                                     } else {
-                                        res.send("Agregada id: "+ id);
+                                        res.send("Agregada id: " + id);
                                     }
                                 });
                             }
@@ -136,9 +125,9 @@ module.exports = function (app, swig, gestorBD) {
         let criterio = {};
 
         //Comprobamos si hay búsqueda:
-        if( req.query.busqueda != null ){
+        if (req.query.busqueda != null) {
             // ¡Usamos regex para que no sea exacta! OJO
-            criterio = {"nombre" : {$regex : ".*"+req.query.busqueda+".*"} };
+            criterio = {"nombre": {$regex: ".*" + req.query.busqueda + ".*"}};
         }
 
         gestorBD.obtenerCanciones(criterio, function (canciones) {
@@ -153,5 +142,96 @@ module.exports = function (app, swig, gestorBD) {
             }
         });
     });
+
+    //Para las canciones del autor:
+    app.get("/publicaciones", function (req, res) {
+        let criterio = {autor: req.session.usuario};
+
+        gestorBD.obtenerCanciones(criterio, function (canciones) {
+            if (canciones == null) {
+                res.send("Error al listar ");
+            } else {
+
+                let respuesta = swig.renderFile('view/bpublicaciones.html',
+                    {
+                        canciones: canciones
+                    });
+                res.send(respuesta);
+            }
+        });
+    });
+
+    //Modificar canciones:
+    app.get('/cancion/modificar/:id', function (req, res) {
+        let criterio = { "_id" : gestorBD.mongo.ObjectID(req.params.id) };
+
+        gestorBD.obtenerCanciones(criterio,function(canciones){
+            if ( canciones == null ){
+                res.send(respuesta);
+            } else {
+                let respuesta = swig.renderFile('view/bcancionModificar.html',
+                    {
+                        cancion : canciones[0]
+                    });
+                res.send(respuesta);
+            }
+        });
+    });
+
+    //El post de modificar:
+    app.post('/cancion/modificar/:id', function (req, res) {
+        let id = req.params.id;
+        let criterio = { "_id" : gestorBD.mongo.ObjectID(id) };
+
+        let cancion = {
+            nombre : req.body.nombre, genero : req.body.genero, precio : req.body.precio
+        };
+
+        gestorBD.modificarCancion(criterio, cancion, function(result) {
+            if (result == null) {
+                res.send("Error al modificar ");
+            } else {
+                paso1ModificarPortada(req.files, id, function (result) {
+                    if( result == null){
+                        res.send("Error en la modificación");
+                    } else {
+                        res.send("Modificado");
+                    }
+                });
+            }
+        });
+
+    });
+
+    //FUNCIONES PARA MODIFICAR:
+    function paso1ModificarPortada(files, id, callback){
+        if (files && files.portada != null) {
+            let imagen =files.portada;
+            imagen.mv('public/portadas/' + id + '.png', function(err) {
+                if (err) {
+                    callback(null); // ERROR
+                } else {
+                    paso2ModificarAudio(files, id, callback); // SIGUIENTE
+                }
+            });
+        } else {
+            paso2ModificarAudio(files, id, callback); // SIGUIENTE
+        }
+    }
+
+    function paso2ModificarAudio(files, id, callback){
+        if (files && files.audio != null) {
+            let audio = files.audio;
+            audio.mv('public/audios/'+id+'.mp3', function(err) {
+                if (err) {
+                    callback(null); // ERROR
+                } else {
+                    callback(true); // FIN
+                }
+            });
+        } else {
+            callback(true); // FIN
+        }
+    }
 
 };

@@ -55,6 +55,7 @@ routerUsuarioSession.use(function (req, res, next) {
 //Aplicar routerUsuarioSession
 app.use("/canciones/agregar",routerUsuarioSession);
 app.use("/publicaciones",routerUsuarioSession);
+app.use("/comentarios/:cancion_id",routerUsuarioSession);
 
 //Hay que comprobar que se es el dueño de los audios, más nivel de detalle:
 let routerAudios = express.Router();
@@ -81,6 +82,7 @@ app.use("/audios/",routerAudios);
 //Rutas controladores por lógicas
 require("./routes/rusuarios.js")(app, swig, gestorBD);	// (app, param1, param2, etc.)
 require("./routes/rcanciones.js")(app, swig, gestorBD);	// (app, param1, param2, etc.)
+require("./routes/rcomentarios.js")(app, swig,gestorBD);
 require("./routes/rautores.js")(app, swig);
 
 //Para referirnos a la carpeta, se hace por convenio el nombre:

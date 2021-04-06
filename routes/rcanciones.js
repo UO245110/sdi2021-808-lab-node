@@ -49,11 +49,23 @@ module.exports = function (app, swig, gestorBD) {
             if (canciones == null) {
                 res.send("Error al recuperar la canción.");
             } else {
-                let respuesta = swig.renderFile('view/bcancion.html',
-                    {
-                        cancion: canciones[0]
-                    });
-                res.send(respuesta);
+
+                //Obtenemos los comentarios:
+                let criterio_comentarios={"cancion_id":gestorBD.mongo.ObjectID(req.params.id)};
+
+                gestorBD.obtenerComentarios(criterio_comentarios,function(comentarios){
+
+                    if (comentarios == null) {
+                        res.send(respuesta);
+                    } else {
+                        let respuesta = swig.renderFile('view/bcancion.html',
+                            {
+                                cancion: canciones[0],
+                                comentarios: comentarios
+                            });
+                        res.send(respuesta);
+                    }
+                });
             }
         });
     });
@@ -169,11 +181,22 @@ module.exports = function (app, swig, gestorBD) {
             if ( canciones == null ){
                 res.send(respuesta);
             } else {
-                let respuesta = swig.renderFile('view/bcancionModificar.html',
-                    {
-                        cancion : canciones[0]
-                    });
-                res.send(respuesta);
+
+                let criterio_comentarios={"cancion_id":gestorBD.mongo.ObjectID(req.params.id)};
+
+                gestorBD.obtenerComentarios(criterio_comentarios,function(comentarios){
+
+                    if (comentarios == null) {
+                        res.send(respuesta);
+                    } else {
+                        let respuesta = swig.renderFile('view/bcancion.html',
+                            {
+                                cancion: canciones[0],
+                                comentarios: comentarios
+                            });
+                        res.send(respuesta);
+                    }
+                });
             }
         });
     });

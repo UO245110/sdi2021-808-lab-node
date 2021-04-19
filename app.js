@@ -113,6 +113,11 @@ require("./routes/rautores.js")(app, swig);
 //Para referirnos a la carpeta, se hace por convenio el nombre:
 app.use(express.static('public'));
 
+//Redirección:
+app.get('/', function (req, res) {
+    res.redirect('/tienda');
+});
+
 //lanzar el servicio
 app.listen(app.get('port'), function () {
     console.log('Servidor activo')

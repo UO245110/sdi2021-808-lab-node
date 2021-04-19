@@ -80,7 +80,8 @@ routerUsuarioAutor.use(function(req, res, next) {
 //Aplicar routerUsuarioAutor
 app.use("/cancion/modificar",routerUsuarioAutor);
 app.use("/cancion/eliminar",routerUsuarioAutor);
-
+app.use("/cancion/comprar",routerUsuarioSession);
+app.use("/compras",routerUsuarioSession);
 
 //Hay que comprobar que se es el dueño de los audios, más nivel de detalle:
 let routerAudios = express.Router();
@@ -95,11 +96,25 @@ routerAudios.use(function(req, res, next) {
             if(req.session.usuario && canciones[0].autor == req.session.usuario ){
                 next();
             } else {
-                res.redirect("/tienda");
+                let criterio = {
+                    usuario: req.session.usuario,
+                    cancionId: mongo.ObjectID(idCancion)
+                };
+
+                gestorBD.obtenerCompras(criterio, function (compras) {
+                    if (compras != null && compras.length > 0) {
+                        next();
+
+                    } else {
+                        res.redirect("/tienda");
+                    }
+                });
             }
         })
 
 });
+
+
 //Aplicar routerAudios
 app.use("/audios/",routerAudios);
 

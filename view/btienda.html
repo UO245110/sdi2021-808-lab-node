@@ -71,7 +71,10 @@
 					<!-- http://www.socicon.com/generator.php -->
 					<div class="wrap">{{ cancion.nombre }}</div>
 					<div class="small">Autor: {{ cancion.autor }} </div>
-					<div class="text-right">{{ cancion.precio }} €</div>
+					<a class="btn btn-primary pull-right"
+					   href="/cancion/comprar/{{cancion._id.toString()}}">{{ cancion.precio }} €
+					</a>
+
 				</a>
 			</div>
 		</div>

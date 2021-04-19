@@ -136,21 +136,56 @@ module.exports = {
         });
     },
 
-modificarCancion : function(criterio, cancion, funcionCallback) {
-        this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
+    modificarCancion : function(criterio, cancion, funcionCallback) {
+            this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
+                if (err) {
+                    funcionCallback(null);
+                } else {
+                    let collection = db.collection('canciones'); collection.update(criterio, {$set: cancion}, function(err, result) {
+                        if (err) {
+                            funcionCallback(null);
+                        } else {
+                            funcionCallback(result);
+                        }
+                        db.close();
+                    });
+                }
+            });
+        },
+
+    insertarCompra: function(compra, funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
                 funcionCallback(null);
             } else {
-                let collection = db.collection('canciones'); collection.update(criterio, {$set: cancion}, function(err, result) {
+                let collection = db.collection('compras');
+                collection.insert(compra, function (err, result) {
                     if (err) {
                         funcionCallback(null);
                     } else {
-                        funcionCallback(result);
+                        funcionCallback(result.ops[0]._id);
+                    }
+                    db.close();
+                });
+            }
+        });
+    },
+
+    obtenerCompras : function(criterio,funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                let collection = db.collection('compras');
+                collection.find(criterio).toArray(function (err, usuarios) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(usuarios);
                     }
                     db.close();
                 });
             }
         });
     }
-
 };

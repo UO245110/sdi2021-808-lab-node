@@ -3,6 +3,10 @@
 let express = require('express');
 let app = express();
 
+//Módulo request para cambio de dvisisas:
+let rest = require('request');
+app.set('rest',rest);
+
 //Esto es para hacer la aplicación más permisisva, no tengo ni idea.
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");

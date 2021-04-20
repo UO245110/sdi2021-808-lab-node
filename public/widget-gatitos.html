@@ -1,0 +1,42 @@
+<div id="widget-gatitos" >
+    <table class="table table-hover">
+        <thead>
+                <th>Datos de gatitos</th>
+            </tr>
+        </thead>
+        <tbody id="tablaCuerpo">
+
+        </tbody>
+    </table>
+</div>
+
+<script>
+    window.history.pushState("", "", "/cliente.html?w=gatitos");
+    var gatitos;
+
+    function cargarGatitos(){
+        $.ajax({
+            url: URLbase + "/gatitos",
+            type: "GET",
+            data: { }, dataType: 'json',
+            headers: { "token": token }, success: function(respuesta) {
+                gatitos = respuesta;
+                actualizarTabla(gatitos);
+            },
+            error : function (error){
+                $( "#contenedor-principal" ).load("widget-login.html");
+            }
+        });
+    }
+
+    function actualizarTabla(gatitosMostrar){
+        $( "#tablaCuerpo" ).empty();
+        // Vaciar la tabla
+            $( "#tablaCuerpo" ).append(
+                "<tr>"+
+                "<td>"+gatitosMostrar.datoGato+"</td>" +
+                "</tr>" );
+    }
+
+    cargarGatitos();
+</script>

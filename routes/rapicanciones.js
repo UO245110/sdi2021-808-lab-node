@@ -14,7 +14,7 @@ module.exports = function(app, gestorBD) {
 
 
     app.get("/api/cancion/:id", function(req, res) {
-        let criterio = { "_id" : gestorBD.mongo.ObjectID(req.params.id)}
+        let criterio = { "_id" : gestorBD.mongo.ObjectID(req.params.id)};
 
         gestorBD.obtenerCanciones(criterio,function(canciones){ if ( canciones == null ){
             res.status(500); res.json({
@@ -28,7 +28,7 @@ module.exports = function(app, gestorBD) {
     });
 
     app.get("/api/cancion/:id", function(req, res) {
-        let criterio = { "_id" : gestorBD.mongo.ObjectID(req.params.id)}
+        let criterio = { "_id" : gestorBD.mongo.ObjectID(req.params.id)};
 
         gestorBD.obtenerCanciones(criterio,function(canciones){ if ( canciones == null ){
             res.status(500); res.json({
@@ -42,7 +42,7 @@ module.exports = function(app, gestorBD) {
     });
 
     app.delete("/api/cancion/:id", function(req, res) {
-        let criterio = { "_id" : gestorBD.mongo.ObjectID(req.params.id)}
+        let criterio = { "_id" : gestorBD.mongo.ObjectID(req.params.id)};
 
         gestorBD.eliminarCancion(criterio,function(canciones){ if ( canciones == null ){
             res.status(500); res.json({
@@ -79,8 +79,10 @@ module.exports = function(app, gestorBD) {
 
         let cancion = {}; // Solo los atributos a modificar
         if ( req.body.nombre != null)
-            cancion.nombre = req.body.nombre; if ( req.body.genero != null)
-            cancion.genero = req.body.genero; if ( req.body.precio != null)
+            cancion.nombre = req.body.nombre;
+        if ( req.body.genero != null)
+            cancion.genero = req.body.genero;
+        if ( req.body.precio != null)
             cancion.precio = req.body.precio;
 
         gestorBD.modificarCancion(criterio, cancion, function(result) { if (result == null) {
@@ -120,4 +122,25 @@ module.exports = function(app, gestorBD) {
         });
     });
 
+    //Complementario gatitos:
+    app.get("/api/gatitos/",function (req,res) {
+        let configuracion = {
+            url: "https://cat-fact.herokuapp.com/facts",
+            method: "get",
+            headers: {
+                "token" : "ejemplo"
+            }
+        };
+        let rest = app.get("rest");
+        rest(configuracion,function (error,response,body) {
+            console.log("cod: " + response.statusCode + " Cuerpo :" + body);
+            let objetoRespuesta = JSON.parse(body);
+            console.log(objetoRespuesta);
+            res.status(200);
+            let i = Math.floor(Math.random() * objetoRespuesta.length);
+            console.log(i);
+            res.json({datoGato : objetoRespuesta[i].text});
+            console.log(objetoRespuesta[i].text);
+        })
+    });
 };

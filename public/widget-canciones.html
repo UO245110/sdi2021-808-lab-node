@@ -90,10 +90,27 @@
     }
 
 
+    var nombreDsc = true;
     function ordenarPorNombre(){
         canciones.sort(function(a, b) {
-            if(a.nombre > b.nombre ) return 1;
-            if(a.nombre < b.nombre ) return -1;
+            if(a.nombre > b.nombre )
+                if (nombreDsc){
+                    nombreDsc = false;
+                    return 1;
+                }
+                else{
+                    nombreDsc = true;
+                    return -1
+                }
+            if(a.nombre < b.nombre )
+                if (nombreDsc){
+                    nombreDsc = false;
+                    return -1;
+                }
+                else{
+                    nombreDsc = true;
+                    return 1;
+                }
             return 0;
          });
         actualizarTabla(canciones);

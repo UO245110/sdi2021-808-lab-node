@@ -81,7 +81,7 @@ routerUsuarioToken.use(function(req, res, next) {
 
 // Aplicar routerUsuarioToken
 app.use('/api/cancion', routerUsuarioToken);
-
+app.use('/api/gatitos', routerUsuarioToken);
 //Renderizado de plantillas: http://node-swig.github.io/swig-templates/docs/tags/
 let swig = require('swig');
 //Database de mongodb:
